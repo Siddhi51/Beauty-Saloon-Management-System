@@ -14,7 +14,7 @@ if (strlen($_SESSION['bpmsuid']==0)) {
   <head>
  
 
-    <title>Beauty Parlour Management System | Booking History</title>
+    <title>Beauty Parlour Management System | Invoice History</title>
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/style-starter.css">
@@ -49,7 +49,7 @@ $(function () {
                 
  Invoice History
             </h3>
-            <p class="tiltle-para ">You can see your invoice here.</p>
+            <p class="tiltle-para ">Showing the all payments histories.</p>
         </div>
 </div>
 </div>
@@ -71,80 +71,41 @@ $(function () {
 
             <div>
                 <div class="cont-details">
-                   <div class="table-content table-responsive cart-table-content m-t-30">
-                    <h3 class="title1">Invoice Details</h3>
-                    
-    <?php
-    $invid=intval($_GET['invoiceid']);
-$ret=mysqli_query($con,"select DISTINCT  date(tblinvoice.PostingDate) as invoicedate,tbluser.FirstName,tbluser.LastName,tbluser.Email,tbluser.MobileNumber,tbluser.RegDate
-    from  tblinvoice 
-    join tbluser on tbluser.ID=tblinvoice.Userid 
-    where tblinvoice.BillingId='$invid'");
-$cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
-
-?>              
-                
-                    <div class="table-responsive bs-example widget-shadow">
-                        <h4>Invoice #<?php echo $invid;?></h4>
-                        <table class="table table-bordered" width="100%" border="1"> 
-<tr>
-<th colspan="6">Customer Details</th>   
-</tr>
-                             <tr> 
-                                <th>Name</th> 
-                                <td><?php echo $row['FirstName']?> <?php echo $row['LastName']?></td> 
-                                <th>Contact no.</th> 
-                                <td><?php echo $row['MobileNumber']?></td>
-                                <th>Email </th> 
-                                <td><?php echo $row['Email']?></td>
-                            </tr> 
-                             <tr> 
-                                <th>Registration Date</th> 
-                                <td><?php echo $row['RegDate']?></td> 
+                   <div class="table-content table-responsive cart-table-content">
+                    <h4 style="padding-bottom: 20px;text-align: center;color: #f567a6;">Invoice History</h4>
+                        <table class="table" border="1">
+                            <thead >
+                                <tr> 
+                                <th>#</th> 
+                                <th>Invoice Id</th> 
+                                <th>Customer Name</th>
+                                <th>Customer Mobile Number</th>
                                 <th>Invoice Date</th> 
-                                <td colspan="3"><?php echo $row['invoicedate']?></td> 
-                            </tr> 
-<?php }?>
-</table> 
-<table class="table table-bordered" width="100%" border="1"> 
-<tr>
-<th colspan="3">Services Details</th>   
-</tr>
-<tr>
-<th>#</th>  
-<th>Service</th>
-<th>Cost</th>
-</tr>
-
-<?php
-$ret=mysqli_query($con,"select tblservices.ServiceName,tblservices.Cost  
-    from  tblinvoice 
-    join tblservices on tblservices.ID=tblinvoice.ServiceId 
-    where tblinvoice.BillingId='$invid'");
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                               
+                                <tr>
+                                    <?php
+                                   $userid= $_SESSION['bpmsuid'];
+ $query=mysqli_query($con,"select distinct tbluser.ID as uid, tbluser.FirstName,tbluser.LastName,tbluser.Email,tbluser.MobileNumber,tblinvoice.BillingId,date(tblinvoice.PostingDate) as PostingDate  from  tbluser   
+    join tblinvoice on tbluser.ID=tblinvoice.Userid where tbluser.ID='$userid'order by tblinvoice.ID desc");
 $cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
-    ?>
+              while($row=mysqli_fetch_array($query))
+              { ?>
+               <tr> 
+                            <th scope="row"><?php echo $cnt;?></th> 
+                            <td><?php  echo $row['BillingId'];?></td>
+                            <td><?php  echo $row['FirstName'];?> <?php  echo $row['LastName'];?></td>
+                            <td><?php  echo $row['MobileNumber'];?></td>
+                            <td><?php  echo $row['PostingDate'];?></td> 
+                                <td><a href="view-invoice.php?invoiceid=<?php  echo $row['BillingId'];?>" class="btn btn-info">View</a></td> 
 
-<tr>
-<th><?php echo $cnt;?></th>
-<td><?php echo $row['ServiceName']?></td>   
-<td><?php echo $subtotal=$row['Cost']?></td>
-</tr>
-<?php 
-$cnt=$cnt+1;
-$gtotal+=$subtotal;
-} ?>
-
-<tr>
-<th colspan="2" style="text-align:center">Grand Total</th>
-<th><?php echo $gtotal?></th>   
-
-</tr>
-</table>
-  <p style="margin-top:1%"  align="center">
-  <i class="fa fa-print fa-2x" style="cursor: pointer;"  OnClick="CallPrint(this.value)" ></i>
-</p>
+                          </tr><?php $cnt=$cnt+1; } ?>
+                             
+                            </tbody>
+                        </table>
                     </div> </div>
                 
     </div>

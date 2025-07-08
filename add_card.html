@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - Beauty Salon Management</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f1f1;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            width: 60%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #d63384;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        .cart-item button {
+            background: #d63384;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .cart-item button:hover {
+            background: #a61d64;
+        }
+        .total {
+            text-align: right;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .buttons button, .buttons a {
+            background: #d63384;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .buttons button:hover, .buttons a:hover {
+            background: #a61d64;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Your Beauty Cart</h2>
+        <div id="cart-items"></div>
+        <div class="total">Total: ₹<span id="total">0</span></div>
+        <div class="buttons">
+            <button onclick="clearCart()">Clear Cart</button>
+            <a href="services.php">Back to Services</a>
+        </div>
+    </div>
+    <script>
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartItems = document.getElementById('cart-items');
+            let total = 0;
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p style="text-align: center; color: #888;">Your cart is empty.</p>';
+                document.getElementById('total').innerText = 0;
+                return;
+            }
+
+            cart.forEach((item, index) => {
+                let div = document.createElement('div');
+                div.className = 'cart-item';
+                div.innerHTML = `<span>${item.name} - $${item.price}</span> <button onclick="removeItem(${index})">Remove</button>`;
+                cartItems.appendChild(div);
+                total += item.price;
+            });
+            document.getElementById('total').innerText = total;
+        }
+
+        function removeItem(index) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        function clearCart() {
+            localStorage.removeItem('cart');
+            loadCart();
+        }
+
+        function addToCart(name, price) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push({ name, price });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        // Adding Facial and Wax services dynamically
+        document.addEventListener("DOMContentLoaded", function () {
+            addToCart("Facial Treatment", 50);
+            addToCart("mahendi Service", 30);
+            addToCart("haircut Service", 30);
+            addToCart("makeup Service", 30);
+            addToCart("hairspa Service", 30);
+            
+
+            
+
+        });
+
+        window.onload = loadCart;
+    </script>
+</body>
+</html>

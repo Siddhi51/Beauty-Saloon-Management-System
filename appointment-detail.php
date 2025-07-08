@@ -47,9 +47,9 @@ $(function () {
             <div class="main-titles-head text-center">
             <h3 class="header-name ">
                 
- Invoice History
+ Booking History
             </h3>
-            <p class="tiltle-para ">You can see your invoice here.</p>
+            <p class="tiltle-para ">Full details of Booked Appointment.</p>
         </div>
 </div>
 </div>
@@ -58,7 +58,7 @@ $(function () {
 <ul class="breadcrumbs-custom-path">
     <li class="right-side propClone"><a href="index.php" class="">Home <span class="fa fa-angle-right" aria-hidden="true"></span></a> <p></li>
     <li class="active ">
-        Invoice History</li>
+        Booking History</li>
 </ul>
 </div>
 </div>
@@ -72,79 +72,70 @@ $(function () {
             <div>
                 <div class="cont-details">
                    <div class="table-content table-responsive cart-table-content m-t-30">
-                    <h3 class="title1">Invoice Details</h3>
-                    
-    <?php
-    $invid=intval($_GET['invoiceid']);
-$ret=mysqli_query($con,"select DISTINCT  date(tblinvoice.PostingDate) as invoicedate,tbluser.FirstName,tbluser.LastName,tbluser.Email,tbluser.MobileNumber,tbluser.RegDate
-    from  tblinvoice 
-    join tbluser on tbluser.ID=tblinvoice.Userid 
-    where tblinvoice.BillingId='$invid'");
+                   <h4 style="padding-bottom: 20px;text-align: center;color: #f567a6;">Appointment Details</h4>
+                        <?php
+$cid=$_GET['aptnumber'];
+$ret=mysqli_query($con,"select tbluser.FirstName,tbluser.LastName,tbluser.Email,tbluser.MobileNumber,tblbook.ID as bid,tblbook.AptNumber,tblbook.AptDate,tblbook.AptTime,tblbook.Message,tblbook.BookingDate,tblbook.Remark,tblbook.Status,tblbook.RemarkDate from tblbook join tbluser on tbluser.ID=tblbook.UserID where tblbook.AptNumber='$cid'");
 $cnt=1;
 while ($row=mysqli_fetch_array($ret)) {
 
-?>              
-                
-                    <div class="table-responsive bs-example widget-shadow">
-                        <h4>Invoice #<?php echo $invid;?></h4>
-                        <table class="table table-bordered" width="100%" border="1"> 
-<tr>
-<th colspan="6">Customer Details</th>   
-</tr>
-                             <tr> 
-                                <th>Name</th> 
-                                <td><?php echo $row['FirstName']?> <?php echo $row['LastName']?></td> 
-                                <th>Contact no.</th> 
-                                <td><?php echo $row['MobileNumber']?></td>
-                                <th>Email </th> 
-                                <td><?php echo $row['Email']?></td>
-                            </tr> 
-                             <tr> 
-                                <th>Registration Date</th> 
-                                <td><?php echo $row['RegDate']?></td> 
-                                <th>Invoice Date</th> 
-                                <td colspan="3"><?php echo $row['invoicedate']?></td> 
-                            </tr> 
-<?php }?>
-</table> 
-<table class="table table-bordered" width="100%" border="1"> 
-<tr>
-<th colspan="3">Services Details</th>   
-</tr>
-<tr>
-<th>#</th>  
-<th>Service</th>
-<th>Cost</th>
-</tr>
-
-<?php
-$ret=mysqli_query($con,"select tblservices.ServiceName,tblservices.Cost  
-    from  tblinvoice 
-    join tblservices on tblservices.ID=tblinvoice.ServiceId 
-    where tblinvoice.BillingId='$invid'");
-$cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
-    ?>
+?>
+                        <table class="table table-bordered">
+                            <tr>
+    <th>Appointment Number</th>
+    <td><?php  echo $row['AptNumber'];?></td>
+  </tr>
+  <tr>
+<th>Name</th>
+    <td><?php  echo $row['FirstName'];?> <?php  echo $row['LastName'];?></td>
+  </tr>
 
 <tr>
-<th><?php echo $cnt;?></th>
-<td><?php echo $row['ServiceName']?></td>   
-<td><?php echo $subtotal=$row['Cost']?></td>
-</tr>
-<?php 
-$cnt=$cnt+1;
-$gtotal+=$subtotal;
-} ?>
+    <th>Email</th>
+    <td><?php  echo $row['Email'];?></td>
+  </tr>
+   <tr>
+    <th>Mobile Number</th>
+    <td><?php  echo $row['MobileNumber'];?></td>
+  </tr>
+   <tr>
+    <th>Appointment Date</th>
+    <td><?php  echo $row['AptDate'];?></td>
+  </tr>
+ 
+<tr>
+    <th>Appointment Time</th>
+    <td><?php  echo $row['AptTime'];?></td>
+  </tr>
+  
+  
+  <tr>
+    <th>Apply Date</th>
+    <td><?php  echo $row['BookingDate'];?></td>
+  </tr>
+  
 
 <tr>
-<th colspan="2" style="text-align:center">Grand Total</th>
-<th><?php echo $gtotal?></th>   
+    <th>Status</th>
+    <td> <?php  
+if($row['Status']=="")
+{
+  echo "Not Updated Yet";
+}
 
-</tr>
-</table>
-  <p style="margin-top:1%"  align="center">
-  <i class="fa fa-print fa-2x" style="cursor: pointer;"  OnClick="CallPrint(this.value)" ></i>
-</p>
+if($row['Status']=="Selected")
+{
+  echo "Selected";
+}
+
+if($row['Status']=="Rejected")
+{
+  echo "Rejected";
+}
+
+     ;?></td>
+  </tr>
+                        </table><?php } ?>
                     </div> </div>
                 
     </div>

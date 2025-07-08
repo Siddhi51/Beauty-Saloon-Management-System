@@ -1,46 +1,68 @@
-<?php
+<?php 
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-error_reporting(0);
+if (strlen($_SESSION['bpmsuid']==0)) {
+  header('location:logout.php');
+  } else{
 
-if(isset($_POST['submit']))
-  {
-    $contactno=$_POST['contactno'];
-    $email=$_POST['email'];
-$password=md5($_POST['newpassword']);
-        $query=mysqli_query($con,"select ID from tbluser where  Email='$email' and MobileNumber='$contactno' ");
-        
-    $ret=mysqli_num_rows($query);
-    if($ret>0){
-      $_SESSION['contactno']=$contactno;
-      $_SESSION['email']=$email;
-      $query1=mysqli_query($con,"update tbluser set Password='$password'  where  Email='$email' && MobileNumber='$contactno' ");
-       if($query1)
-   {
-echo "<script>alert('Password successfully changed');</script>";
-
-   }
-     
-    }
-    else{
+    if (isset($_POST['submit'])) {
+        $uid = $_SESSION['bpmsuid'];
+        $adate = $_POST['adate'];
+        $atime = $_POST['atime'];
+        $msg = $_POST['message'];
+        $aptnumber = mt_rand(100000000, 999999999);
+        $services = isset($_POST['services']) ? $_POST['services'] : []; // Array of selected services
     
-      echo "<script>alert('Invalid Details. Please try again.');</script>";
+        $totalAmount = 0; // Initialize total amount
+    
+        if (!empty($services)) {
+            $serviceIDs = implode(',', array_map('intval', $services)); // Convert array to comma-separated string
+            
+            // Calculate total cost
+            $query = mysqli_query($con, "SELECT SUM(Cost) AS total FROM tblservices WHERE ID IN ($serviceIDs)");
+            $result = mysqli_fetch_assoc($query);
+            $totalAmount = $result['total']; // Get total cost
+        } else {
+            $serviceIDs = NULL; // No services selected
+        }
+    
+        // Insert into tblbook with service IDs as a comma-separated string
+        $query = mysqli_query($con, "INSERT INTO tblbook (UserID, AptNumber, AptDate, AptTime, Message, TotalAmount, Services) 
+                                     VALUES ('$uid', '$aptnumber', '$adate', '$atime', '$msg', '$totalAmount', '$serviceIDs')");
+    
+        if ($query) {
+            $_SESSION['aptno'] = $aptnumber;
+            echo "<script>window.location.href='thank-you.php'</script>";
+        } else {
+            echo '<script>alert("Something Went Wrong. Please try again")</script>';
+        }
     }
-  }
+    
+
+    
 ?>
 <!doctype html>
 <html lang="en">
   <head>
  
 
-    <title>Beauty Parlour Management System | Forgot Password Page</title>
+    <title>Beauty Parlour Management System | Appointment Page</title>
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/style-starter.css">
     <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:400,700,700i&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+    <style>
+        input[type="checkbox"] {
+            cursor: pointer;
+            appearance: auto; /* Ensures default checkbox rendering */
+        }
+        label {
+            cursor: pointer;
+        }
+    </style>
   </head>
   <body id="home">
 <?php include_once('includes/header.php');?>
@@ -57,19 +79,6 @@ $(function () {
   })
 });
 </script>
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-} 
-
-</script>
 <!-- disable body scroll which navbar is in active -->
 
 <!-- breadcrumbs -->
@@ -79,9 +88,9 @@ return true;
             <div class="main-titles-head text-center">
             <h3 class="header-name ">
                 
- Forgot Password
+ Book Appointment
             </h3>
-            <p class="tiltle-para ">Change your forgotten password !</p>
+            <p class="tiltle-para ">If you want to book any appointment, then fill this and get booked appointments.</p>
         </div>
 </div>
 </div>
@@ -90,7 +99,7 @@ return true;
 <ul class="breadcrumbs-custom-path">
     <li class="right-side propClone"><a href="index.php" class="">Home <span class="fa fa-angle-right" aria-hidden="true"></span></a> <p></li>
     <li class="active ">
-        Forgot Password</li>
+        Book Appointment</li>
 </ul>
 </div>
 </div>
@@ -100,16 +109,14 @@ return true;
 <section class="w3l-contact-info-main" id="contact">
     <div class="contact-sec	">
         <div class="container">
-
             <div class="d-grid contact-view">
                 <div class="cont-details">
                     <?php
+                        $ret=mysqli_query($con,"select * from tblpage where PageType='contactus' ");
+                        $cnt=1;
+                        while ($row=mysqli_fetch_array($ret)) {
 
-$ret=mysqli_query($con,"select * from tblpage where PageType='contactus' ");
-$cnt=1;
-while ($row=mysqli_fetch_array($ret)) {
-
-?>
+                        ?>
                     <div class="cont-top">
                         <div class="cont-left text-center">
                             <span class="fa fa-phone text-primary"></span>
@@ -139,7 +146,7 @@ while ($row=mysqli_fetch_array($ret)) {
                     </div>
                     <div class="cont-top margin-up">
                         <div class="cont-left text-center">
-                            <span class="fa fa-map-marker text-primary"></span>
+                            <span class="fa fa-clock-o text-primary"></span>
                         </div>
                         <div class="cont-right">
                             <h6>Time</h6>
@@ -148,31 +155,42 @@ while ($row=mysqli_fetch_array($ret)) {
                     </div>
                <?php } ?> </div>
                 <div class="map-content-9 mt-lg-0 mt-4">
-                    <h3 style="padding-bottom: 10px;">Reset your password and Fill below details</h3>
-                    <form method="post" name="changepassword" onsubmit="return checkpass();">
-                        <div>
-                            <input type="text" class="form-control" name="email" placeholder="Enter Your Email" required="true">
-                           
-                        </div>
-                        <div style="padding-top: 30px;">
-                          <input type="text" class="form-control" name="contactno" placeholder="Contact Number" required="true" pattern="[0-9]+">
-                        
-                        </div>
-                        <div style="padding-top: 30px;">
-                          <input type="password" class="form-control" id="newpassword" name="newpassword" placeholder="New Password">
-                        
-                        </div>
-                        <div style="padding-top: 30px;">
-                           <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password">
-                        
-                        </div>
-                        <div class="twice-two" style="padding-top: 30px;">
-                          <a class="link--gray" style="color: blue;" href="login.php">signin</a>
-                        
-                        </div>
-                        <button type="submit" class="btn btn-contact" name="submit">Reset</button>
-                    </form>
+                <form method="post">
+    <div style="padding-top: 30px;">
+        <label>Appointment Date</label>
+        <input type="date" class="form-control appointment_date" name="adate" id="adate" required>
+    </div>
+
+    <div style="padding-top: 30px;">
+        <label>Appointment Time</label>
+        <input type="time" class="form-control appointment_time" min="10:30" max="19:30" name="atime" id="atime" required>
+    </div>
+
+    <div style="padding-top: 30px;">
+        <label style="font-weight: bold; font-size: 18px;">Select Services</label>
+        <div style="display: flex; flex-wrap: wrap; gap: 15px; padding-top: 10px;">
+            <?php
+            $query = mysqli_query($con, "SELECT * FROM tblservices");
+            while ($row = mysqli_fetch_array($query)) {
+            ?>
+                <div style="width: 48%; display: flex; align-items: center; gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                    <input type="checkbox" name="services[]" value="<?php echo $row['ID']; ?>" style="width: 18px; height: 18px;">
+                    <label style="font-size: 16px; color: #333;"><?php echo $row['ServiceName']." ". $row['Cost'] . " /-" ; ?></label>
                 </div>
+            <?php } ?>
+        </div>
+    </div>
+
+    <div style="padding-top: 30px;">
+        <label>Additional Message</label>
+        <textarea class="form-control" name="message" rows="4" placeholder="Any additional details..."></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-contact" name="submit">Make an Appointment</button>
+   
+</form>
+
+      </div>
     </div>
    
     </div></div>
@@ -201,8 +219,22 @@ while ($row=mysqli_fetch_array($ret)) {
 		document.body.scrollTop = 0;
 		document.documentElement.scrollTop = 0;
 	}
-</script>
+$(function(){
+    var dtToday = new Date();
+    
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+    if(month < 10)
+        month = '0' + month.toString();
+    if(day < 10)
+        day = '0' + day.toString();
+    
+    var maxDate = year + '-' + month + '-' + day;
+    $('#adate').attr('min', maxDate);
+});</script>
 <!-- /move top -->
 </body>
 
 </html>
+<?php } ?>

@@ -1,40 +1,38 @@
-<?php
+<?php 
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-error_reporting(0);
-
+if (strlen($_SESSION['bpmsuid']==0)) {
+  header('location:logout.php');
+  } else{
 if(isset($_POST['submit']))
   {
-    $contactno=$_POST['contactno'];
-    $email=$_POST['email'];
-$password=md5($_POST['newpassword']);
-        $query=mysqli_query($con,"select ID from tbluser where  Email='$email' and MobileNumber='$contactno' ");
-        
-    $ret=mysqli_num_rows($query);
-    if($ret>0){
-      $_SESSION['contactno']=$contactno;
-      $_SESSION['email']=$email;
-      $query1=mysqli_query($con,"update tbluser set Password='$password'  where  Email='$email' && MobileNumber='$contactno' ");
-       if($query1)
-   {
-echo "<script>alert('Password successfully changed');</script>";
+    $uid=$_SESSION['bpmsuid'];
+    $fname=$_POST['firstname'];
+    $lname=$_POST['lastname'];
+    $query=mysqli_query($con, "update tbluser set FirstName='$fname', LastName='$lname' where ID='$uid'");
 
-   }
-     
-    }
-    else{
-    
-      echo "<script>alert('Invalid Details. Please try again.');</script>";
-    }
+
+    if ($query) {
+ echo '<script>alert("Profile updated successully.")</script>';
+echo '<script>window.location.href=profile.php</script>';
   }
-?>
+  else
+    {
+     
+      echo '<script>alert("Something Went Wrong. Please try again.")</script>';
+    }
+
+}
+
+
+  ?>
 <!doctype html>
 <html lang="en">
   <head>
  
 
-    <title>Beauty Parlour Management System | Forgot Password Page</title>
+    <title>Beauty Parlour Management System | Signup Page</title>
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/style-starter.css">
@@ -57,19 +55,7 @@ $(function () {
   })
 });
 </script>
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-} 
 
-</script>
 <!-- disable body scroll which navbar is in active -->
 
 <!-- breadcrumbs -->
@@ -79,9 +65,9 @@ return true;
             <div class="main-titles-head text-center">
             <h3 class="header-name ">
                 
- Forgot Password
+ Profile
             </h3>
-            <p class="tiltle-para ">Change your forgotten password !</p>
+            <p class="tiltle-para ">It will showing the profile of logged in user.</p>
         </div>
 </div>
 </div>
@@ -90,7 +76,7 @@ return true;
 <ul class="breadcrumbs-custom-path">
     <li class="right-side propClone"><a href="index.php" class="">Home <span class="fa fa-angle-right" aria-hidden="true"></span></a> <p></li>
     <li class="active ">
-        Forgot Password</li>
+        profile</li>
 </ul>
 </div>
 </div>
@@ -148,29 +134,41 @@ while ($row=mysqli_fetch_array($ret)) {
                     </div>
                <?php } ?> </div>
                 <div class="map-content-9 mt-lg-0 mt-4">
-                    <h3 style="padding-bottom: 10px;">Reset your password and Fill below details</h3>
-                    <form method="post" name="changepassword" onsubmit="return checkpass();">
-                        <div>
-                            <input type="text" class="form-control" name="email" placeholder="Enter Your Email" required="true">
+                    <h3>User Profile!!</h3>
+                    <form method="post" name="signup" onsubmit="return checkpass();">
+<?php
+$uid=$_SESSION['bpmsuid'];
+$ret=mysqli_query($con,"select * from tbluser where ID='$uid'");
+$cnt=1;
+while ($row=mysqli_fetch_array($ret)) {
+
+?>
+                        <div style="padding-top: 30px;">
+                            <label>First Name</label>
+                            
+                            <input type="text" class="form-control" name="firstname" value="<?php  echo $row['FirstName'];?>" required="true"></div>
+                           <div style="padding-top: 30px;">
+                            <label>Last Name</label>
+                            
+                            <input type="text" class="form-control" name="lastname" value="<?php  echo $row['LastName'];?>" required="true">
+                        </div>
+                        <div style="padding-top: 30px;">
+                            <label>Mobile Number</label>
                            
+                           <input type="text" class="form-control" name="mobilenumber" value="<?php  echo $row['MobileNumber'];?>"  readonly="true"></div>
+                           <div style="padding-top: 30px;">
+                            <label>Email address</label>
+                            
+                            <input type="text" class="form-control" name="email" value="<?php  echo $row['Email'];?>"  readonly="true">
                         </div>
-                        <div style="padding-top: 30px;">
-                          <input type="text" class="form-control" name="contactno" placeholder="Contact Number" required="true" pattern="[0-9]+">
-                        
-                        </div>
-                        <div style="padding-top: 30px;">
-                          <input type="password" class="form-control" id="newpassword" name="newpassword" placeholder="New Password">
-                        
-                        </div>
-                        <div style="padding-top: 30px;">
-                           <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password">
-                        
-                        </div>
-                        <div class="twice-two" style="padding-top: 30px;">
-                          <a class="link--gray" style="color: blue;" href="login.php">signin</a>
-                        
-                        </div>
-                        <button type="submit" class="btn btn-contact" name="submit">Reset</button>
+                         <div style="padding-top: 30px;">
+                            <label>Registration Date</label>
+                           
+                           <input type="text" class="form-control" name="regdate" value="<?php  echo $row['RegDate'];?>"  readonly="true">
+                       </div>
+                     
+                      <?php }?>
+                        <button type="submit" class="btn btn-contact" name="submit">Save Change</button>
                     </form>
                 </div>
     </div>
@@ -205,4 +203,4 @@ while ($row=mysqli_fetch_array($ret)) {
 <!-- /move top -->
 </body>
 
-</html>
+</html><?php } ?>

@@ -4,28 +4,18 @@ error_reporting(0);
 include('includes/dbconnection.php');
 error_reporting(0);
 
-if(isset($_POST['submit']))
+if(isset($_POST['login']))
   {
-    $contactno=$_POST['contactno'];
-    $email=$_POST['email'];
-$password=md5($_POST['newpassword']);
-        $query=mysqli_query($con,"select ID from tbluser where  Email='$email' and MobileNumber='$contactno' ");
-        
-    $ret=mysqli_num_rows($query);
+    $emailcon=$_POST['emailcont'];
+    $password=md5($_POST['password']);
+    $query=mysqli_query($con,"select ID from tbluser where  (Email='$emailcon' || MobileNumber='$emailcon') && Password='$password' ");
+    $ret=mysqli_fetch_array($query);
     if($ret>0){
-      $_SESSION['contactno']=$contactno;
-      $_SESSION['email']=$email;
-      $query1=mysqli_query($con,"update tbluser set Password='$password'  where  Email='$email' && MobileNumber='$contactno' ");
-       if($query1)
-   {
-echo "<script>alert('Password successfully changed');</script>";
-
-   }
-     
+      $_SESSION['bpmsuid']=$ret['ID'];
+     header('location:index.php');
     }
     else{
-    
-      echo "<script>alert('Invalid Details. Please try again.');</script>";
+    echo "<script>alert('Invalid Details.');</script>";
     }
   }
 ?>
@@ -34,7 +24,7 @@ echo "<script>alert('Password successfully changed');</script>";
   <head>
  
 
-    <title>Beauty Parlour Management System | Forgot Password Page</title>
+    <title>Beauty Parlour Management System | Login</title>
 
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/style-starter.css">
@@ -57,19 +47,6 @@ $(function () {
   })
 });
 </script>
-<script type="text/javascript">
-function checkpass()
-{
-if(document.changepassword.newpassword.value!=document.changepassword.confirmpassword.value)
-{
-alert('New Password and Confirm Password field does not match');
-document.changepassword.confirmpassword.focus();
-return false;
-}
-return true;
-} 
-
-</script>
 <!-- disable body scroll which navbar is in active -->
 
 <!-- breadcrumbs -->
@@ -79,9 +56,8 @@ return true;
             <div class="main-titles-head text-center">
             <h3 class="header-name ">
                 
- Forgot Password
+ Login Page
             </h3>
-            <p class="tiltle-para ">Change your forgotten password !</p>
         </div>
 </div>
 </div>
@@ -90,7 +66,7 @@ return true;
 <ul class="breadcrumbs-custom-path">
     <li class="right-side propClone"><a href="index.php" class="">Home <span class="fa fa-angle-right" aria-hidden="true"></span></a> <p></li>
     <li class="active ">
-        Forgot Password</li>
+        Login</li>
 </ul>
 </div>
 </div>
@@ -148,29 +124,21 @@ while ($row=mysqli_fetch_array($ret)) {
                     </div>
                <?php } ?> </div>
                 <div class="map-content-9 mt-lg-0 mt-4">
-                    <h3 style="padding-bottom: 10px;">Reset your password and Fill below details</h3>
-                    <form method="post" name="changepassword" onsubmit="return checkpass();">
+                    <form method="post">
                         <div>
-                            <input type="text" class="form-control" name="email" placeholder="Enter Your Email" required="true">
+                            <input type="text" class="form-control" name="emailcont" required="true" placeholder="Registered Email or Contact Number" required="true">
                            
                         </div>
                         <div style="padding-top: 30px;">
-                          <input type="text" class="form-control" name="contactno" placeholder="Contact Number" required="true" pattern="[0-9]+">
+                          <input type="password" class="form-control" name="password" placeholder="Password" required="true">
                         
                         </div>
-                        <div style="padding-top: 30px;">
-                          <input type="password" class="form-control" id="newpassword" name="newpassword" placeholder="New Password">
                         
-                        </div>
-                        <div style="padding-top: 30px;">
-                           <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirm Password">
-                        
-                        </div>
                         <div class="twice-two" style="padding-top: 30px;">
-                          <a class="link--gray" style="color: blue;" href="login.php">signin</a>
+                          <a class="link--gray" style="color: blue;" href="forgot-password.php">Forgot Password?</a>
                         
                         </div>
-                        <button type="submit" class="btn btn-contact" name="submit">Reset</button>
+                        <button type="submit" class="btn btn-contact" name="login">Login</button>
                     </form>
                 </div>
     </div>

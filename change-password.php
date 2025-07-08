@@ -1,63 +1,60 @@
-<?php
+<?php 
 session_start();
-include('includes/dbconnection.php');
 error_reporting(0);
-if (strlen($_SESSION['bpmsaid']==0)) {
+include('includes/dbconnection.php');
+if (strlen($_SESSION['bpmsuid']==0)) {
   header('location:logout.php');
   } else{
-if(isset($_POST['submit']))
+if(isset($_POST['change']))
 {
-$adminid=$_SESSION['bpmsaid'];
+$userid=$_SESSION['bpmsuid'];
 $cpassword=md5($_POST['currentpassword']);
 $newpassword=md5($_POST['newpassword']);
-$query=mysqli_query($con,"select ID from tbladmin where ID='$adminid' and   Password='$cpassword'");
-$row=mysqli_fetch_array($query);
+$query1=mysqli_query($con,"select ID from tbluser where ID='$userid' and   Password='$cpassword'");
+$row=mysqli_fetch_array($query1);
 if($row>0){
-$ret=mysqli_query($con,"update tbladmin set Password='$newpassword' where ID='$adminid'");
-$msg= "Your password successully changed"; 
+$ret=mysqli_query($con,"update tbluser set Password='$newpassword' where ID='$userid'");
+
+echo '<script>alert("Your password successully changed.")</script>';
 } else {
-
-$msg="Your current password is wrong";
-}
-
-
+echo '<script>alert("Your current password is wrong.")</script>';
 
 }
 
-  
-?>
-<!DOCTYPE HTML>
-<html>
-<head>
-<title>BPMS | Change Password</title>
 
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-<!-- Bootstrap Core CSS -->
-<link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
-<!-- Custom CSS -->
-<link href="css/style.css" rel='stylesheet' type='text/css' />
-<!-- font CSS -->
-<!-- font-awesome icons -->
-<link href="css/font-awesome.css" rel="stylesheet"> 
-<!-- //font-awesome icons -->
- <!-- js-->
-<script src="js/jquery-1.11.1.min.js"></script>
-<script src="js/modernizr.custom.js"></script>
-<!--webfonts-->
-<link href='//fonts.googleapis.com/css?family=Roboto+Condensed:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<!--//webfonts--> 
-<!--animate-->
-<link href="css/animate.css" rel="stylesheet" type="text/css" media="all">
-<script src="js/wow.min.js"></script>
-	<script>
-		 new WOW().init();
-	</script>
-<!--//end-animate-->
-<!-- Metis Menu -->
-<script src="js/metisMenu.min.js"></script>
-<script src="js/custom.js"></script>
-<link href="css/custom.css" rel="stylesheet">
-<!--//Metis Menu -->
+
+}
+
+
+  ?>
+<!doctype html>
+<html lang="en">
+  <head>
+ 
+
+    <title>Beauty Parlour Management System | Signup Page</title>
+
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="assets/css/style-starter.css">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:400,700,700i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+  </head>
+  <body id="home">
+<?php include_once('includes/header.php');?>
+
+<script src="assets/js/jquery-3.3.1.min.js"></script> <!-- Common jquery plugin -->
+<!--bootstrap working-->
+<script src="assets/js/bootstrap.min.js"></script>
+<!-- //bootstrap working-->
+<!-- disable body scroll which navbar is in active -->
+<script>
+$(function () {
+  $('.navbar-toggler').click(function () {
+    $('body').toggleClass('noscroll');
+  })
+});
+</script>
 <script type="text/javascript">
 function checkpass()
 {
@@ -71,76 +68,132 @@ return true;
 } 
 
 </script>
-</head> 
-<body class="cbp-spmenu-push">
-	<div class="main-content">
-		<!--left-fixed -navigation-->
-		 <?php include_once('includes/sidebar.php');?>
-		<!--left-fixed -navigation-->
-		<!-- header-starts -->
-	 <?php include_once('includes/header.php');?>
-		<!-- //header-ends -->
-		<!-- main content start-->
-		<div id="page-wrapper">
-			<div class="main-page">
-				<div class="forms">
-					<h3 class="title1">Change Password</h3>
-					<div class="form-grids row widget-shadow" data-example-id="basic-forms"> 
-						<div class="form-title">
-							<h4>Reset Your Password :</h4>
-						</div>
-						<div class="form-body">
-							<form method="post" name="changepassword" onsubmit="return checkpass();" action="">
-								<p style="font-size:16px; color:red" align="center"> <?php if($msg){
-    echo $msg;
-  }  ?> </p>
+<!-- disable body scroll which navbar is in active -->
 
-  <?php
-$adminid=$_SESSION['bpmsaid'];
-$ret=mysqli_query($con,"select * from tbladmin where ID='$adminid'");
+<!-- breadcrumbs -->
+<section class="w3l-inner-banner-main">
+    <div class="about-inner contact ">
+        <div class="container">   
+            <div class="main-titles-head text-center">
+            <h3 class="header-name ">
+                
+ Change Password
+            </h3>
+            <p class="tiltle-para ">change your password using this page.</p>
+        </div>
+</div>
+</div>
+<div class="breadcrumbs-sub">
+<div class="container">   
+<ul class="breadcrumbs-custom-path">
+    <li class="right-side propClone"><a href="index.php" class="">Home <span class="fa fa-angle-right" aria-hidden="true"></span></a> <p></li>
+    <li class="active ">
+        Change Password</li>
+</ul>
+</div>
+</div>
+    </div>
+</section>
+<!-- breadcrumbs //-->
+<section class="w3l-contact-info-main" id="contact">
+    <div class="contact-sec	">
+        <div class="container">
+
+            <div class="d-grid contact-view">
+                <div class="cont-details">
+                    <?php
+
+$ret=mysqli_query($con,"select * from tblpage where PageType='contactus' ");
 $cnt=1;
 while ($row=mysqli_fetch_array($ret)) {
 
 ?>
-							 <div class="form-group"> <label for="exampleInputEmail1">Current Password</label> <input type="password" name="currentpassword" class="form-control" required= "true" value=""> </div> <div class="form-group"> <label for="exampleInputPassword1">New Password</label> <input type="password" name="newpassword" class="form-control" value="" required="true"> </div>
-							 <div class="form-group"> <label for="exampleInputPassword1">Confirm Password</label> <input type="password" name="confirmpassword" class="form-control" value="" required="true"> </div>
-							  
-							  <button type="submit" name="submit" class="btn btn-default">Change</button> </form> 
-						</div>
-						<?php } ?>
-					</div>
-				
-				
-			</div>
-		</div>
-		 <?php include_once('includes/footer.php');?>
-	</div>
-	<!-- Classie -->
-		<script src="js/classie.js"></script>
-		<script>
-			var menuLeft = document.getElementById( 'cbp-spmenu-s1' ),
-				showLeftPush = document.getElementById( 'showLeftPush' ),
-				body = document.body;
-				
-			showLeftPush.onclick = function() {
-				classie.toggle( this, 'active' );
-				classie.toggle( body, 'cbp-spmenu-push-toright' );
-				classie.toggle( menuLeft, 'cbp-spmenu-open' );
-				disableOther( 'showLeftPush' );
-			};
-			
-			function disableOther( button ) {
-				if( button !== 'showLeftPush' ) {
-					classie.toggle( showLeftPush, 'disabled' );
-				}
-			}
-		</script>
-	<!--scrolling js-->
-	<script src="js/jquery.nicescroll.js"></script>
-	<script src="js/scripts.js"></script>
-	<!--//scrolling js-->
-	<!-- Bootstrap Core JavaScript -->
-   <script src="js/bootstrap.js"> </script>
+                    <div class="cont-top">
+                        <div class="cont-left text-center">
+                            <span class="fa fa-phone text-primary"></span>
+                        </div>
+                        <div class="cont-right">
+                            <h6>Call Us</h6>
+                            <p class="para"><a href="tel:+44 99 555 42">+<?php  echo $row['MobileNumber'];?></a></p>
+                        </div>
+                    </div>
+                    <div class="cont-top margin-up">
+                        <div class="cont-left text-center">
+                            <span class="fa fa-envelope-o text-primary"></span>
+                        </div>
+                        <div class="cont-right">
+                            <h6>Email Us</h6>
+                            <p class="para"><a href="mailto:example@mail.com" class="mail"><?php  echo $row['Email'];?></a></p>
+                        </div>
+                    </div>
+                    <div class="cont-top margin-up">
+                        <div class="cont-left text-center">
+                            <span class="fa fa-map-marker text-primary"></span>
+                        </div>
+                        <div class="cont-right">
+                            <h6>Address</h6>
+                            <p class="para"> <?php  echo $row['PageDescription'];?></p>
+                        </div>
+                    </div>
+                    <div class="cont-top margin-up">
+                        <div class="cont-left text-center">
+                            <span class="fa fa-map-marker text-primary"></span>
+                        </div>
+                        <div class="cont-right">
+                            <h6>Time</h6>
+                            <p class="para"> <?php  echo $row['Timing'];?></p>
+                        </div>
+                    </div>
+               <?php } ?> </div>
+                <div class="map-content-9 mt-lg-0 mt-4">
+                    <h3>Password change!!</h3>
+                    <form method="post" name="changepassword" onsubmit="return checkpass();">
+
+                        <div style="padding-top: 30px;">
+                            <label>Current Password</label>
+                            
+                            <input type="password" class="form-control" placeholder="Current Password" id="currentpassword" name="currentpassword" value="" required="true"></div>
+                           <div style="padding-top: 30px;">
+                            <label>New Password</label>
+                            
+                            <input type="password" class="form-control" placeholder="New Password" id="newpassword" name="newpassword" value="" required="true">
+                        </div>
+                        <div style="padding-top: 30px;">
+                            <label>Confirm Password</label>
+                           <input type="password" class="form-control" placeholder="Confirm Password" id="confirmpassword" name="confirmpassword" value=""  required="true">
+                        <button type="submit" class="btn btn-contact" name="change">Save Change</button>
+                    </form>
+                </div>
+    </div>
+   
+    </div></div>
+</section>
+<?php include_once('includes/footer.php');?>
+<!-- move top -->
+<button onclick="topFunction()" id="movetop" title="Go to top">
+	<span class="fa fa-long-arrow-up"></span>
+</button>
+<script>
+	// When the user scrolls down 20px from the top of the document, show the button
+	window.onscroll = function () {
+		scrollFunction()
+	};
+
+	function scrollFunction() {
+		if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+			document.getElementById("movetop").style.display = "block";
+		} else {
+			document.getElementById("movetop").style.display = "none";
+		}
+	}
+
+	// When the user clicks on the button, scroll to the top of the document
+	function topFunction() {
+		document.body.scrollTop = 0;
+		document.documentElement.scrollTop = 0;
+	}
+</script>
+<!-- /move top -->
 </body>
-</html>
-<?php } ?>
+
+</html><?php } ?>

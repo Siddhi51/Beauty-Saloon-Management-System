@@ -1,0 +1,22 @@
+[
+    {
+        "title": "Luxury Facial Package",
+        "description": "Get a glowing skin with our premium facial treatment.",
+         "price": "10% disscount "
+    },
+    {
+        "title": "Hair Spa & Styling",
+        "description": "Relaxing hair spa with expert styling included.",
+        "price": "50% disscount 4 pereson "
+    },
+    {
+        "title": "Manicure & Pedicure Combo",
+        "description": "Perfect nail care with our professional manicure & pedicure service.",
+        "price": "40% disscound"
+    },
+    {
+        "title": "Bridal Makeup Package",
+        "description": "Look stunning on your special day with our bridal makeup package.",
+        "price": "20% disscount per person"
+    }
+]
