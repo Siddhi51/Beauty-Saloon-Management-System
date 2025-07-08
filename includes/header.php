@@ -1,98 +1,87 @@
-<div class="sticky-header header-section ">
-      <div class="header-left">
-        <!--toggle button start-->
-        <button id="showLeftPush"><i class="fa fa-bars"></i></button>
-        <!--toggle button end-->
-        <!--logo -->
-        <div class="logo">
-          <a href="index.html">
-            <h1>Beauty Hub</h1>
-            <span>Admin Panel</span>
-          </a>
-        </div>
-        <!--//logo-->
+<section class=" w3l-header-4 header-sticky">
+    <header class="absolute-top">
+    <link rel="stylesheet" href="..\assets\css\style-starter.css">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:400,700,700i&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+ 
        
-       
-        <div class="clearfix"> </div>
-      </div>
-      <div class="header-right">
-        <div class="profile_details_left"><!--notifications of menu start -->
-          <ul class="nofitications-dropdown">
-            <?php
-$ret1=mysqli_query($con,"select tbluser.FirstName,tbluser.LastName,tblbook.ID as bid,tblbook.AptNumber from tblbook join tbluser on tbluser.ID=tblbook.UserID where tblbook.Status is null");
-$num=mysqli_num_rows($ret1);
+        <div class="container">
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <h1 style="text-align: left;"><a class="navbar-brand" href="index.php"> <!--<span class="fa fa-line-chart" aria-hidden="true"></span> -->
+            Beauty Hub
+            </a></h1>
+            <button class="navbar-toggler bg-gradient collapsed" type="button" data-toggle="collapse"
+                data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="fa icon-expand fa-bars"></span>
+        <span class="fa icon-close fa-times"></span>
+            </button>
+      
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php">Home <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.php">About</a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="services.php">Service</a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="fetch_offer.php">Offer</a>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.php">Contact</a>
+                    </li>
+                   
 
-?>  
-            <li class="dropdown head-dpdn">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-bell"></i><span class="badge blue"><?php echo $num;?></span></a>
-              
-              <ul class="dropdown-menu">
-                <li>
-                  <div class="notification_header">
-                    <h3>You have <?php echo $num;?> new notification</h3>
-                  </div>
-                </li>
-                <li>
-            
-                   <div class="notification_desc">
-                     <?php if($num>0){
-while($result=mysqli_fetch_array($ret1))
-{
-            ?>
-                 <a class="dropdown-item" href="view-appointment.php?viewid=<?php echo $result['bid'];?>">New appointment received from <?php echo $result['FirstName'];?> <?php echo $result['LastName'];?> (<?php echo $result['AptNumber'];?>)</a>
-                 <hr />
-<?php }} else {?>
-    <a class="dropdown-item" href="all-appointment.php">No New Appointment Received</a>
-        <?php } ?>
-                           
-                  </div>
-                  <div class="clearfix"></div>  
-                 </a></li>
-                 
+                     
+                     <?php if (strlen($_SESSION['bpmsuid']==0)) {?>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="admin/index.php">Admin</a>
+                    </li> -->
+                     <li class="nav-item">
+                        <a class="nav-link" href="signup.php">SignUp</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.php">Login</a>
+                    </li><?php }?>
+                    <?php if (strlen($_SESSION['bpmsuid']>0)) {?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="book-appointment.php">Booking</a>
+                     </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="booking-history.php">History</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="invoice-history.php">Invoice</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.php">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="rating.php">Rating</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="payment.php">Payment</a>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="change-password.php">Setting</a>
+
+                    </li><li class="nav-item">
+                        <a class="nav-link" href="logout.php">Logout</a>
+                    </li>
+                  <?php }?>
+                </ul>
                 
-                 <li>
-                  <div class="notification_bottom">
-                    <a href="new-appointment.php">See all notifications</a>
-                  </div> 
-                </li>
-              </ul>
-            </li> 
-          
-          </ul>
-          <div class="clearfix"> </div>
+            </div>
         </div>
-        <!--notification menu end -->
-        <div class="profile_details">  
-        <?php
-$adid=$_SESSION['bpmsaid'];
-$ret=mysqli_query($con,"select AdminName from tbladmin where ID='$adid'");
-$row=mysqli_fetch_array($ret);
-$name=$row['AdminName'];
 
-?> 
-          <ul>
-            <li class="dropdown profile_details_drop">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <div class="profile_img"> 
-                  <span class="prfil-img"><img src="images/admin.png" alt="" width="50" height="50"> </span> 
-                  <div class="user-name">
-                    <p><?php echo $name; ?></p>
-                    <span>Administrator</span>
-                  </div>
-                  <i class="fa fa-angle-down lnr"></i>
-                  <i class="fa fa-angle-up lnr"></i>
-                  <div class="clearfix"></div>  
-                </div>  
-              </a>
-              <ul class="dropdown-menu drp-mnu">
-                <li> <a href="change-password.php"><i class="fa fa-cog"></i> Settings</a> </li> 
-                <li> <a href="admin-profile.php"><i class="fa fa-user"></i> Profile</a> </li> 
-                <li> <a href="index.php"><i class="fa fa-sign-out"></i> Logout</a> </li>
-              </ul>
-            </li>
-          </ul>
-        </div>  
-        <div class="clearfix"> </div> 
-      </div>
-      <div class="clearfix"> </div> 
+        </nav>
     </div>
+      </header>
+</section>
